@@ -48,36 +48,26 @@ npx prisma generate
 Running Locally
 
 
-Frontend
+•	Clone all the files into the local machine
 
-cd frontend
-npm install
-npm run dev
+•	Frontend-
+o	Navigate to the frontend folder and enter the following command- 
+	npm install
+	npm run dev
+•	Authorization Service-
+o	Navigate to the auth-service folder and enter the following command- 
+	npm install
+	prisma npx prisma migrate reset –force
+	npx prisma migrate dev --name init
+	npm run dev
 
-Auth Service
-
-cd auth-service
-
-//locally reset prisma
-npx prisma migrate reset --force  
-npx prisma migrate dev --name init
-npm run dev          
-
-Listens on port 4000 by default.
-
-Customer Service
-
-cd customer-service
-
-//locally reset prisma
-npx prisma migrate reset --force  
-npx prisma migrate dev --name init
-
-npm run dev          
-
-Listens on port 3000 by default.
+•	Cutomer Service-
+o	Navigate to the cust-service folder and enter the following command-
+	npm install
+	prisma npx prisma migrate reset –force
+	npx prisma migrate dev --name init
+	npm run dev
+•	Open the application at http://localhost:5173
 
 
-
-Opens at http://localhost:5173.
 
