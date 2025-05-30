@@ -1,0 +1,46 @@
+# render.yaml
+services:
+  - type: web_service
+    name: auth-service
+    env: node
+    region: oregon              # or pick your nearest region
+    branch: main
+    root: auth-service
+    buildCommand: npm install && npx prisma generate
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: myapp-db        # the Render Postgres name you created
+          property: connectionString
+      - key: JWT_SECRET
+        value: my_super_secret_key
+
+  - type: web_service
+    name: customer-service
+    env: node
+    region: oregon
+    branch: main
+    root: customer-service
+    buildCommand: npm install && npx prisma generate
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: myapp-db
+          property: connectionString
+      - key: JWT_SECRET
+        value: my_super_secret_key
+
+  - type: static_site
+    name: frontend
+    region: oregon
+    branch: main
+    root: frontend
+    buildCommand: npm install && npm run build
+    publishPath: dist
+    envVars:
+      - key: VITE_AUTH_URL
+        value: https://auth-service.onrender.com
+      - key: VITE_API_URL
+        value: https://customer-service.onrender.com
