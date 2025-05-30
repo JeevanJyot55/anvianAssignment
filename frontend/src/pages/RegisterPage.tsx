@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import { useNavigate, Link } from 'react-router-dom';
 import authApi from '../services/authApi';
-
 
 const RegisterPage: React.FC = () => {
   const [email, setEmail]       = useState('');
@@ -13,9 +13,7 @@ const RegisterPage: React.FC = () => {
     e.preventDefault();
     try {
       setError(null);
-      // call /register on Auth Service
       await authApi.post('/register', { email, password });
-      // on success, go to login
       navigate('/login');
     } catch (err: any) {
       setError(err.response?.data?.error || 'Registration failed');
@@ -23,24 +21,53 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      {error && <div className="text-red-500">{error}</div>}
-      <input
-        type="email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-        placeholder="Email"
-        required
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-        placeholder="Password"
-        required
-      />
-      <button type="submit">Register</button>
-    </form>
+    <>
+      <Navbar />
+      <div className="max-w-sm mx-auto bg-white p-8 rounded-xl shadow-lg mt-12">
+        <h1 className="text-2xl font-semibold mb-6 text-center">Register</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="bg-red-100 text-red-700 p-2 rounded">
+              {error}
+            </div>
+          )}
+          <div>
+            <label className="block mb-1 font-medium">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="w-full border rounded p-2"
+              placeholder="you@example.com"
+              required
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              className="w-full border rounded p-2"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
+          >
+            Register
+          </button>
+        </form>
+        <p className="mt-4 text-center text-sm">
+          Already registered?{' '}
+          <Link to="/login" className="text-blue-600 hover:underline">
+            Log in here
+          </Link>
+        </p>
+      </div>
+    </>
   );
 };
 
