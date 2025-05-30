@@ -7,9 +7,10 @@ services:
     region: oregon
     branch: main
     root: auth-service
+    # install dev deps, generate Prisma client, compile TS
     buildCommand: |
       cd auth-service
-      npm install
+      npm install --include=dev
       npx prisma generate --schema=prisma/schema.prisma
       npm run build
     startCommand: npm start
@@ -29,7 +30,7 @@ services:
     root: customer-service
     buildCommand: |
       cd customer-service
-      npm install
+      npm install --include=dev
       npx prisma generate --schema=prisma/schema.prisma
       npm run build
     startCommand: npm start
