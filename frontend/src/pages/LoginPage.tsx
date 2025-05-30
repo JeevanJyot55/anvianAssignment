@@ -1,29 +1,28 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
+import authApi from '../services/authApi';
 
 const LoginPage: React.FC = () => {
-    const [email,setEmail] = useState('');
-    const [password,setPassword] = useState('');
-    const [error,setError] = useState<string | null>(null);
-    const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            setError(null);
-            const response = await api.post('/login', { email, password });
-            const {token} = response.data;
-            localStorage.setItem('token', token);
-            navigate('/customers');
-        } catch (err: any) {
-            setError(err.response?.data?.error || 'Login failed. Please try again.');
-        }
-    };
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    setError(null);
+    const response = await authApi.post('/login', { email, password });
+    localStorage.setItem('token', response.data.token);
+    navigate('/customers');
+  } catch (err: any) {
+    setError(err.response?.data?.error || 'Login failed');
+  }
+};
 
-    return (
-        <div className = "flex flex-col item-center justufy-center min-h-screen p-4">
-             <h1 className="text-2xl mb-4">Login</h1>
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+      <h1 className="text-2xl mb-4">Login</h1>
       <form onSubmit={handleSubmit} className="w-full max-w-sm">
         {error && <div className="text-red-500 mb-2">{error}</div>}
         <div className="mb-4">

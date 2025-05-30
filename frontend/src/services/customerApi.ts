@@ -1,14 +1,11 @@
 import axios from 'axios';
 
-console.log('→ VITE_AUTH_URL =', import.meta.env.VITE_AUTH_URL);
-
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+const customerApi = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,   // must be http://localhost:3000
   headers: { 'Content-Type': 'application/json' },
-  withCredentials: true,
 });
 
-api.interceptors.request.use((config) => {
+customerApi.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
     config.headers = config.headers || {};
@@ -16,4 +13,5 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
-export default api;
+
+export default customerApi;

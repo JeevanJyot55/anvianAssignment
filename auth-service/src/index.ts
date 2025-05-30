@@ -1,6 +1,9 @@
 //Handling HTTP routes
 import  express, { NextFunction, Request, Response,RequestHandler } from "express";
 
+import cors from "cors";
+
+
 //Db client for Prisma
 import { PrismaClient } from "./generated/prisma";
 
@@ -15,6 +18,13 @@ dotenv.config();
  
 //create server
 const app = express();
+
+app.use(cors({
+  origin:  "http://localhost:5173",
+  credentials: true, 
+}
+));
+
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {

@@ -1,6 +1,12 @@
 import dotenv from 'dotenv';
 import { RequestHandler } from 'express';
+import cors from 'cors';
 dotenv.config();
+
+console.log("🚀 Customer Service index.ts loaded");
+
+console.log("→ Loaded JWT_SECRET:", process.env.JWT_SECRET);
+
 
 import jwt from 'jsonwebtoken';
 
@@ -10,6 +16,8 @@ if (!JWT_SECRET) {
   process.exit(1);
 }
 
+console.log("Customer Service JWT_SECRET:", process.env.JWT_SECRET);
+
 const requireAuth: RequestHandler = (req, res, next) => {
     const auth = req.headers.authorization;
     if (!auth?.startsWith('Bearer ')) {
@@ -18,6 +26,7 @@ const requireAuth: RequestHandler = (req, res, next) => {
     }
     const token = auth.slice(7);
     try {
+        console.log("Incoming token:", token);
         const decoded = jwt.verify(token, JWT_SECRET!);
         (req as any).user = decoded; 
         next();
@@ -33,8 +42,21 @@ import express ,{ Request,Response } from 'express';
 
 // Initialize application
 const app = express();
+
+app.use((req, res, next) => {
+  console.log(`→ ${req.method} ${req.path}`);
+  next();
+});
+
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  })
+);
+
+
 app.use(express.json());
-app.use("/customers", requireAuth);
 
 
 const prisma = new PrismaClient();
@@ -46,7 +68,7 @@ app.get('/', async (_req, res) => {
 });
 
 //Customer list
-app.get('/customers', async (_req: Request, res:Response) => {
+app.get('/customers', requireAuth, async (_req: Request, res:Response) => {
     const customers = await prisma.customer.findMany();
     res.json(customers);
     return;
@@ -82,7 +104,7 @@ app.post('/customers', async (req: Request, res:Response) => {
   });
 
 //Upadte existing customer
-app.put('/customers/:id', async (req: Request, res:Response) => {
+app.put('/customers/:id', requireAuth,async (req: Request, res:Response) => {
     const { id } = req.params;
     const { name, email, phone } = req.body;
 
@@ -100,7 +122,7 @@ app.put('/customers/:id', async (req: Request, res:Response) => {
   });
 
 //Delete custoemr by ID
-app.delete('/customers/:id', async (req: Request, res:Response) => {
+app.delete('/customers/:id', requireAuth, async (req: Request, res:Response) => {
     const { id } = req.params;
 
     try{
