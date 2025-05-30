@@ -1,17 +1,22 @@
 # render.yaml
+
 services:
   - type: web_service
     name: auth-service
     env: node
-    region: oregon              # or pick your nearest region
+    region: oregon
     branch: main
     root: auth-service
-    buildCommand: npm install && npx prisma generate
+    buildCommand: |
+      cd auth-service
+      npm install
+      npx prisma generate --schema=prisma/schema.prisma
+      npm run build
     startCommand: npm start
     envVars:
       - key: DATABASE_URL
         fromDatabase:
-          name: myapp-db        # the Render Postgres name you created
+          name: myapp-db
           property: connectionString
       - key: JWT_SECRET
         value: my_super_secret_key
@@ -22,7 +27,11 @@ services:
     region: oregon
     branch: main
     root: customer-service
-    buildCommand: npm install && npx prisma generate
+    buildCommand: |
+      cd customer-service
+      npm install
+      npx prisma generate --schema=prisma/schema.prisma
+      npm run build
     startCommand: npm start
     envVars:
       - key: DATABASE_URL
